@@ -21,17 +21,21 @@ import {
   type ShiftName
 } from '../data/hospitalData'
 
+type ShiftFilter = ShiftName | 'All'
+
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend, Filler)
 
 const selectedDepartment = ref<Department>('ER')
-const selectedShift = ref<ShiftName>('Night')
+const selectedShift = ref<ShiftFilter>('Night')
 
 const departmentOptions = departments
-const shiftOptions: ShiftName[] = ['Day', 'Evening', 'Night']
+const shiftOptions: ShiftFilter[] = ['Day', 'Night', 'All']
 
 const filteredShifts = computed(() =>
   hospitalData.shifts.filter(
-    (entry) => entry.department === selectedDepartment.value && entry.shift === selectedShift.value
+    (entry) =>
+      entry.department === selectedDepartment.value &&
+      (selectedShift.value === 'All' || entry.shift === selectedShift.value)
   )
 )
 
@@ -185,7 +189,7 @@ const narrativeStats = computed(() => [
     </v-row>
 
     <v-row>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="8">
         <v-card class="pa-4" elevation="0" rounded="xl" border>
           <div class="d-flex justify-space-between align-center mb-4">
             <span class="text-subtitle-2 text-medium-emphasis">Department</span>
@@ -198,7 +202,7 @@ const narrativeStats = computed(() => [
         </v-card>
       </v-col>
 
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="4">
         <v-card class="pa-4" elevation="0" rounded="xl" border>
           <div class="d-flex justify-space-between align-center mb-4">
             <span class="text-subtitle-2 text-medium-emphasis">Shift focus</span>
@@ -273,15 +277,26 @@ const narrativeStats = computed(() => [
     <v-row class="mt-4">
       <v-col cols="12">
         <v-card class="pa-5" elevation="0" rounded="xl" border>
-          <h2 class="text-h5 mb-2">What the story says</h2>
-          <p class="mb-2">
-            The highest waits cluster around the nights when staffing falls below the recommended level. Each spike in
-            wait time arrives after the staffing shortfall, which means the system is absorbing risk several hours later.
-          </p>
-          <p>
-            The admissions curve reinforces that trend: summer and early fall demand is already elevated, so the same
-            staffing gap is amplified into much longer delays.
-          </p>
+          <div class="insight-heading d-flex align-center mb-4">
+            <v-avatar color="amber-lighten-5" size="44" class="mr-3">
+              <v-icon color="amber-darken-3">mdi-lightbulb-on-outline</v-icon>
+            </v-avatar>
+            <h2 class="text-h5 mb-0">Insight Highlight</h2>
+          </div>
+          <div class="insight-callout mb-4">
+            <span class="insight-emoji" aria-hidden="true">📉</span>
+            <strong>The wait is a ripple, not a random spike.</strong>
+          </div>
+          <div class="insight-copy">
+            <p class="mb-3">
+              The highest waits cluster around nights when staffing falls below the recommended level. Each spike arrives
+              after the shortfall, which means the system is absorbing risk several hours later. 🕒
+            </p>
+            <p>
+              Summer and early fall demand is already elevated, so the same staffing gap is amplified into much longer
+              delays. 🌡️
+            </p>
+          </div>
         </v-card>
       </v-col>
     </v-row>
@@ -338,5 +353,26 @@ const narrativeStats = computed(() => [
 
 .admissions-chart {
   height: 260px;
+}
+
+.insight-callout {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-left: 4px solid #f59e0b;
+  border-radius: 10px;
+  background: #fff8e7;
+  color: #78350f;
+}
+
+.insight-emoji {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.insight-copy {
+  max-width: 900px;
+  color: rgba(15, 23, 42, 0.78);
 }
 </style>
