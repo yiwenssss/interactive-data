@@ -174,6 +174,74 @@ const narrativeStats = computed(() => [
     tone: 'info'
   }
 ])
+
+const insightCopy: Record<string, { headline: string; first: string; second: string }> = {
+  'ER-Day': {
+    headline: 'ER days absorb the first wave of demand.',
+    first: 'Day coverage has the largest patient volume, so a small gap here can quickly lengthen the queue before evening arrives.',
+    second: 'Protecting this handoff keeps the rest of the day from starting in recovery mode.'
+  },
+  'ER-Night': {
+    headline: 'ER nights turn a staffing gap into a wait-time spike.',
+    first: 'Night coverage is where the sharpest delay appears: fewer clinicians are carrying a queue that can reach nearly three hours.',
+    second: 'That makes overnight staffing a practical lever for preventing tomorrow morning backlog.'
+  },
+  'ICU-Day': {
+    headline: 'ICU days are about protecting complex care.',
+    first: 'Daytime ICU work is less about volume and more about keeping high-acuity patients from competing for the same attention.',
+    second: 'A stable daytime team creates room for careful decisions when the unit is full.'
+  },
+  'ICU-Night': {
+    headline: 'ICU nights carry quiet but costly risk.',
+    first: 'The night gap is easy to miss because fewer patients arrive, but each patient requires sustained, high-intensity care.',
+    second: 'Coverage after dark protects continuity, not just capacity.'
+  },
+  'Telemetry-Day': {
+    headline: 'Telemetry days depend on steady watchfulness.',
+    first: 'During the day, consistent monitoring helps the team spot changes before they become escalations or transfers.',
+    second: 'Reliable coverage turns early signals into earlier action.'
+  },
+  'Telemetry-Night': {
+    headline: 'Telemetry nights expose the cost of thin coverage.',
+    first: 'With fewer people watching the monitors overnight, small staffing gaps can stretch response time when a patient changes suddenly.',
+    second: 'Night coverage is a quiet safeguard against avoidable escalation.'
+  },
+  'Surgery-Day': {
+    headline: 'Surgery days are choreography under pressure.',
+    first: 'The daytime schedule depends on every role arriving ready, because one missing person can slow several rooms at once.',
+    second: 'Staffing the full chain keeps procedure time from becoming recovery time.'
+  },
+  'Surgery-Night': {
+    headline: 'Surgery nights rely on readiness, not volume.',
+    first: 'Overnight teams may see fewer procedures, but they need enough depth to respond safely when an urgent case arrives.',
+    second: 'A small reserve of coverage buys the system valuable flexibility.'
+  },
+  'ER-All': {
+    headline: 'ER pressure builds across the full day.',
+    first: 'The department is not dealing with one isolated spike; morning volume, evening arrivals, and overnight gaps compound each other.',
+    second: 'The strongest intervention is a coordinated day, not a single heroic shift.'
+  },
+  'ICU-All': {
+    headline: 'ICU capacity is a continuity problem.',
+    first: 'Across the day, staffing has to preserve the same level of attention as patients move between rounds, procedures, and rest periods.',
+    second: 'Consistency is what keeps a full unit from becoming an unsafe unit.'
+  },
+  'Telemetry-All': {
+    headline: 'Telemetry turns small signals into a system story.',
+    first: 'The full-day view connects monitoring, response, and handoff quality rather than treating each shift as a separate island.',
+    second: 'Better coverage gives the team time to act before the next alarm.'
+  },
+  'Surgery-All': {
+    headline: 'Surgery capacity is limited by the whole chain.',
+    first: 'Rooms, clinicians, recovery, and urgent readiness all have to line up; a staffing gap in one place can slow the entire schedule.',
+    second: 'Planning for the day as a system protects both throughput and care quality.'
+  }
+}
+
+const insightHighlight = computed(() => {
+  const key = `${selectedDepartment.value}-${selectedShift.value}`
+  return insightCopy[key]
+})
 </script>
 
 <template>
@@ -226,6 +294,28 @@ const narrativeStats = computed(() => [
       </v-col>
     </v-row>
 
+    <v-row class="mt-4 insight-row" justify="end">
+      <v-col cols="12" md="7" lg="5">
+        <v-card class="pa-5 insight-card" elevation="0" rounded="xl" border>
+          <div class="insight-heading mb-4">
+            <span class="insight-heading-emoji" aria-hidden="true">📉</span>
+            <h2 class="text-h5 mb-0">Insight Highlight</h2>
+          </div>
+          <div class="insight-callout mb-4">
+            <strong>{{ insightHighlight.headline }}</strong>
+          </div>
+          <div class="insight-copy">
+            <p class="mb-3">
+              {{ insightHighlight.first }}
+            </p>
+            <p>
+              {{ insightHighlight.second }}
+            </p>
+          </div>
+        </v-card>
+      </v-col>
+    </v-row>
+
     <v-row class="mt-4">
       <v-col cols="12" lg="7">
         <v-card class="pa-4 chart-card" elevation="0" rounded="xl" border>
@@ -274,32 +364,6 @@ const narrativeStats = computed(() => [
       </v-col>
     </v-row>
 
-    <v-row class="mt-4">
-      <v-col cols="12">
-        <v-card class="pa-5" elevation="0" rounded="xl" border>
-          <div class="insight-heading d-flex align-center mb-4">
-            <v-avatar color="amber-lighten-5" size="44" class="mr-3">
-              <v-icon color="amber-darken-3">mdi-lightbulb-on-outline</v-icon>
-            </v-avatar>
-            <h2 class="text-h5 mb-0">Insight Highlight</h2>
-          </div>
-          <div class="insight-callout mb-4">
-            <span class="insight-emoji" aria-hidden="true">📉</span>
-            <strong>The wait is a ripple, not a random spike.</strong>
-          </div>
-          <div class="insight-copy">
-            <p class="mb-3">
-              The highest waits cluster around nights when staffing falls below the recommended level. Each spike arrives
-              after the shortfall, which means the system is absorbing risk several hours later. 🕒
-            </p>
-            <p>
-              Summer and early fall demand is already elevated, so the same staffing gap is amplified into much longer
-              delays. 🌡️
-            </p>
-          </div>
-        </v-card>
-      </v-col>
-    </v-row>
   </v-container>
 </template>
 
@@ -356,14 +420,14 @@ const narrativeStats = computed(() => [
 }
 
 .insight-callout {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  border-left: 4px solid #f59e0b;
+  display: block;
+  padding: 12px;
+  border-left: none;
   border-radius: 10px;
   background: #fff8e7;
   color: #78350f;
+  text-align: left;
+  overflow-wrap: anywhere;
 }
 
 .insight-emoji {
@@ -374,5 +438,55 @@ const narrativeStats = computed(() => [
 .insight-copy {
   max-width: 900px;
   color: rgba(15, 23, 42, 0.78);
+}
+
+.insight-card {
+  position: fixed;
+  top: 143px;
+  right: max(20px, calc((100vw - 1280px) / 2));
+  width: 135px;
+  max-width: calc(100vw - 40px);
+  max-height: calc(100vh - 136px);
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  z-index: 10;
+  box-shadow: 0 14px 36px rgba(15, 23, 42, 0.12) !important;
+}
+
+.insight-card h2 {
+  font-size: 0.95rem !important;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.insight-card .insight-heading {
+  margin-bottom: 12px !important;
+}
+
+.insight-heading-emoji {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.insight-card .insight-callout {
+  padding: 10px;
+  font-size: 0.75rem;
+  text-align: left;
+}
+
+.insight-card .insight-copy {
+  font-size: 0.73rem;
+  line-height: 1.4;
+}
+
+@media (max-width: 959px) {
+  .insight-card {
+    position: static;
+    width: auto;
+  }
 }
 </style>
