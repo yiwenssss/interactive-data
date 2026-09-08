@@ -176,19 +176,16 @@ const narrativeStats = computed(() => [
   <v-container class="py-8">
     <v-row>
       <v-col cols="12">
-        <div class="hero-panel pa-6 pa-md-8 rounded-xl">
-          <p class="eyebrow mb-2">Operational Story</p>
-          <h1 class="text-h3 text-md-h2 mb-4">When staffing slips, wait time follows hours later.</h1>
-          <p class="story-intro mb-5">
-            A short staffing gap on a single night shift creates a backlog that lingers into the next day.
-            The pattern becomes more dangerous when seasonal demand rises at the same time.
-          </p>
-        </div>
+        <h1 class="text-h3 text-md-h2 mb-4">When staffing slips, wait time follows hours later.</h1>
+        <p class="story-intro mb-5">
+          A short staffing gap on a single night shift creates a backlog that lingers into the next day.
+          The pattern becomes more dangerous when seasonal demand rises at the same time.
+        </p>
       </v-col>
     </v-row>
 
-    <v-row class="mt-2">
-      <v-col cols="12" md="6" lg="4">
+    <v-row>
+      <v-col cols="12" md="6">
         <v-card class="pa-4" elevation="0" rounded="xl" border>
           <div class="d-flex justify-space-between align-center mb-4">
             <span class="text-subtitle-2 text-medium-emphasis">Department</span>
@@ -201,7 +198,7 @@ const narrativeStats = computed(() => [
         </v-card>
       </v-col>
 
-      <v-col cols="12" md="6" lg="4">
+      <v-col cols="12" md="6">
         <v-card class="pa-4" elevation="0" rounded="xl" border>
           <div class="d-flex justify-space-between align-center mb-4">
             <span class="text-subtitle-2 text-medium-emphasis">Shift focus</span>
@@ -214,14 +211,6 @@ const narrativeStats = computed(() => [
         </v-card>
       </v-col>
 
-      <v-col cols="12" lg="4">
-        <v-card class="pa-4 metric-card" elevation="0" rounded="xl" border>
-          <div class="text-subtitle-2 text-medium-emphasis mb-2">Narrative checkpoint</div>
-          <div class="text-body-1">
-            {{ selectedDepartment }} staffing and wait time are now aligned around the {{ selectedShift.toLowerCase() }} shift.
-          </div>
-        </v-card>
-      </v-col>
     </v-row>
 
     <v-row class="mt-2">
