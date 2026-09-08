@@ -1,0 +1,35 @@
+html, body, #app {
+  margin: 0;
+  min-height: 100%;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  background: #f3f6fb;
+  color: #0f172a;
+}
+
+body {
+  min-height: 100vh;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+.v-btn-group {
+  width: 100%;
+}
+
+.v-btn-group .v-btn {
+  border-radius: 10px;
+}
+
+.v-card.border {
+  border: 1px solid rgba(148, 163, 184, 0.25) !important;
+}
+
