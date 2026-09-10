@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { Bar, Line } from 'vue-chartjs'
 import {
   Chart as ChartJS,
@@ -29,7 +29,24 @@ const selectedDepartment = ref<Department>('ER')
 const selectedShift = ref<ShiftFilter>('Night')
 
 const departmentOptions = departments
-const shiftOptions: ShiftFilter[] = ['Day', 'Night', 'All']
+const shiftOptions = computed<ShiftFilter[]>(() => {
+  const availableShifts = shiftsForDepartment.value
+  return [...availableShifts, 'All']
+})
+
+const shiftsForDepartment = computed(() =>
+  [...new Set(
+    hospitalData.shifts
+      .filter((entry) => entry.department === selectedDepartment.value)
+      .map((entry) => entry.shift)
+  )]
+)
+
+watch(selectedDepartment, () => {
+  if (selectedShift.value !== 'All' && !shiftsForDepartment.value.includes(selectedShift.value)) {
+    selectedShift.value = 'All'
+  }
+})
 
 const filteredShifts = computed(() =>
   hospitalData.shifts.filter(
@@ -160,7 +177,7 @@ const admissionsChartData = computed(() => ({
 const narrativeStats = computed(() => [
   {
     label: 'Current staffing gap',
-    value: `${Math.max(...staffingGapData.value)} open roles`,
+    value: `${Math.max(0, ...staffingGapData.value)} open roles`,
     tone: 'warning'
   },
   {
@@ -298,7 +315,7 @@ const insightHighlight = computed(() => {
       <v-col cols="12" md="7" lg="5">
         <v-card class="pa-5 insight-card" elevation="0" rounded="xl" border>
           <div class="insight-heading mb-4">
-            <span class="insight-heading-emoji" aria-hidden="true">📉</span>
+            <v-icon class="insight-heading-icon" icon="mdi-chart-line-variant" aria-hidden="true" />
             <h2 class="text-h5 mb-0">Insight Highlight</h2>
           </div>
           <div class="insight-callout mb-4">
@@ -322,7 +339,7 @@ const insightHighlight = computed(() => {
           <div class="d-flex justify-space-between align-center mb-3">
             <div>
               <div class="text-overline text-medium-emphasis">Cause and effect</div>
-              <h2 class="text-h5 mb-0">Staffing gap vs. wait time</h2>
+              <h2 class="text-h5 mb-0">Staffing coverage and wait time</h2>
             </div>
           </div>
           <div class="chart-wrap">
@@ -441,17 +458,8 @@ const insightHighlight = computed(() => {
 }
 
 .insight-card {
-  position: fixed;
-  top: 143px;
-  right: max(20px, calc((100vw - 1280px) / 2));
-  width: 135px;
-  max-width: calc(100vw - 40px);
-  max-height: calc(100vh - 136px);
-  overflow-y: auto;
+  width: 100%;
   overflow-wrap: anywhere;
-  font-size: 0.78rem;
-  line-height: 1.35;
-  z-index: 10;
   box-shadow: 0 14px 36px rgba(15, 23, 42, 0.12) !important;
 }
 
@@ -472,6 +480,11 @@ const insightHighlight = computed(() => {
   line-height: 1;
 }
 
+.insight-heading-icon {
+  color: #b45309;
+  margin-bottom: 8px;
+}
+
 .insight-card .insight-callout {
   padding: 10px;
   font-size: 0.75rem;
@@ -486,7 +499,6 @@ const insightHighlight = computed(() => {
 @media (max-width: 959px) {
   .insight-card {
     position: static;
-    width: auto;
   }
 }
 </style>
